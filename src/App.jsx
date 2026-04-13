@@ -9,8 +9,8 @@ const modeConfig = {
     prompt: "Build a campaign plan with creator mix, platform and ROI for my upcoming launch",
     glow: "rgba(251,146,60,0.28)",
     chatShift: "-4px",
-    chatTilt: "-2deg",
-    chatYaw: "-3deg",
+    chatTilt: "-3deg",
+    chatYaw: "-4deg",
   },
   run: {
     prompt: "Run a $25K campaign for our Q1 launch",
@@ -23,8 +23,8 @@ const modeConfig = {
     prompt: <>How many people did our <span className="bg-[#e0f2fe] text-[#0284c7] font-semibold px-2 py-0.5 rounded-md mx-0.5">@Q1 Campaign</span> reach?</>,
     glow: "rgba(168,85,247,0.28)",
     chatShift: "4px",
-    chatTilt: "2deg",
-    chatYaw: "3deg",
+    chatTilt: "3deg",
+    chatYaw: "4deg",
   },
 };
 
@@ -214,16 +214,85 @@ export default function App() {
   const [activeMode, setActiveMode] = useState("plan");
   const [hoverMode, setHoverMode] = useState(null);
   const [isReady, setIsReady] = useState(false);
+  const [showIntroCursor, setShowIntroCursor] = useState(false);
+  const [introCursorPos, setIntroCursorPos] = useState({ x: 0, y: 0 });
+  const [introClicking, setIntroClicking] = useState(false);
+  const [introMode, setIntroMode] = useState(null);
   const visualMode = hoverMode ?? activeMode;
-  const current = modeConfig[visualMode];
+  const current = modeConfig[introMode ?? visualMode];
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setIsReady(true));
     return () => cancelAnimationFrame(id);
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    const runIntro = async () => {
+      await new Promise((r) => setTimeout(r, 900));
+      if (cancelled) return;
+      setShowIntroCursor(true);
+
+      for (const mode of modes) {
+        if (cancelled) return;
+        const button = document.querySelector(`[data-mode="${mode}"]`);
+        if (!(button instanceof HTMLElement)) continue;
+
+        const rect = button.getBoundingClientRect();
+        setIntroCursorPos({
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        });
+        setIntroMode(mode);
+        setHoverMode(mode);
+
+        await new Promise((r) => setTimeout(r, 560));
+        if (cancelled) return;
+        setIntroClicking(true);
+        setActiveMode(mode);
+        await new Promise((r) => setTimeout(r, 200));
+        if (cancelled) return;
+        setIntroClicking(false);
+        await new Promise((r) => setTimeout(r, 520));
+      }
+
+      if (cancelled) return;
+      setHoverMode(null);
+      setIntroMode(null);
+      await new Promise((r) => setTimeout(r, 240));
+      if (cancelled) return;
+      setShowIntroCursor(false);
+    };
+
+    runIntro();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div className="relative h-screen overflow-hidden bg-white font-body text-gray-900 selection:bg-gray-200">
+      <div
+        className={`pointer-events-none fixed z-[9999] transition-all duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${showIntroCursor ? "opacity-100 scale-100" : "opacity-0 scale-75"}`}
+        style={{ left: introCursorPos.x - 10, top: introCursorPos.y - 2, willChange: "transform,left,top" }}
+      >
+        <svg
+          width="22"
+          height="26"
+          viewBox="0 0 24 28"
+          fill="none"
+          className={`transition-transform duration-150 ${introClicking ? "scale-75" : "scale-100"}`}
+        >
+          <path
+            d="M4 2L4 22L9.5 16.5L14.5 25L18 23L13 14.5L20 14.5L4 2Z"
+            fill="#111827"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
 
       <div className="relative z-10 mx-auto flex h-full w-full max-w-[1200px] flex-col px-4 md:px-8 pb-[10vh]">
 
@@ -334,6 +403,7 @@ export default function App() {
                 return (
                   <button
                     key={mode}
+                    data-mode={mode}
                     onMouseEnter={() => setHoverMode(mode)}
                     onMouseLeave={() => setHoverMode(null)}
                     onFocus={() => setHoverMode(mode)}
