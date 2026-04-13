@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ArrowUp, AtSign, BarChart3, Check, ChevronDown, Globe, MoveRight, Play, Plus, Sparkles } from "lucide-react";
 
 /* ─── mode data ─── */
@@ -209,21 +209,73 @@ function RevealText({ text, className = "", delay = 0 }) {
   );
 }
 
+function ScrollRevealText({ text, className = "", progress = 0, start = 0, span = 0.3 }) {
+  const words = text.split(" ");
+  const step = span / Math.max(words.length, 1);
+  return (
+    <span className={className}>
+      {words.map((word, i) => (
+        <span
+          key={`${word}-${i}`}
+          className="inline-block transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          style={{
+            opacity: Math.max(0, Math.min(1, (progress - (start + i * step)) / (step * 1.4))),
+            transform: `translateY(${Math.max(0, 8 - ((progress - (start + i * step)) / (step * 1.4)) * 8)}px)`,
+            transitionDelay: "0ms",
+          }}
+        >
+          {word}&nbsp;
+        </span>
+      ))}
+    </span>
+  );
+}
+
 /* ─── Main app ─── */
 export default function App() {
   const [activeMode, setActiveMode] = useState("plan");
   const [hoverMode, setHoverMode] = useState(null);
   const [isReady, setIsReady] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+  const [testimonialProgress, setTestimonialProgress] = useState(0);
   const [showIntroCursor, setShowIntroCursor] = useState(false);
   const [introCursorPos, setIntroCursorPos] = useState({ x: 0, y: 0 });
   const [introClicking, setIntroClicking] = useState(false);
   const [introMode, setIntroMode] = useState(null);
+  const testimonialRef = useRef(null);
   const visualMode = hoverMode ?? activeMode;
   const current = modeConfig[introMode ?? visualMode];
+  const heroLift = Math.min(scrollY * 0.22, 120);
+  const heroFade = Math.max(1 - scrollY / 700, 0.28);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setIsReady(true));
     return () => cancelAnimationFrame(id);
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const onScrollY = () => {
+      setScrollY(window.scrollY || 0);
+      const el = testimonialRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+      const start = vh * 0.9;
+      const end = vh * 0.15;
+      const p = (start - rect.top) / (start - end);
+      setTestimonialProgress(Math.max(0, Math.min(1, p)));
+    };
+    onScrollY();
+    window.addEventListener("scroll", onScrollY, { passive: true });
+    return () => window.removeEventListener("scroll", onScrollY);
   }, []);
 
   useEffect(() => {
@@ -272,7 +324,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="relative h-screen overflow-hidden bg-white font-body text-gray-900 selection:bg-gray-200">
+    <div className="relative min-h-screen bg-white font-body text-gray-900 selection:bg-gray-200">
       <div
         className={`pointer-events-none fixed z-[9999] transition-all duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${showIntroCursor ? "opacity-100 scale-100" : "opacity-0 scale-75"}`}
         style={{ left: introCursorPos.x - 10, top: introCursorPos.y - 2, willChange: "transform,left,top" }}
@@ -294,28 +346,35 @@ export default function App() {
         </svg>
       </div>
 
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-[1200px] flex-col px-4 md:px-8 pb-[10vh]">
-
-        {/* Nav */}
-        <nav className="hidden items-center justify-between pt-5 lg:flex shrink-0 transform-gpu translate-z-0">
-          <div className="flex items-center gap-2 rounded-[14px] border border-gray-200 bg-white/80 px-3.5 py-2 backdrop-blur-md shadow-lg">
+      {/* Nav */}
+      <nav
+        className={`sticky top-0 z-40 mx-auto hidden w-full max-w-[1200px] items-center justify-between px-4 md:px-8 py-3 lg:flex transition-all duration-300 ${
+          isScrolled ? "bg-white/70 backdrop-blur-xl border-b border-gray-200/80 shadow-[0_8px_24px_rgba(17,24,39,0.08)]" : "bg-transparent"
+        }`}
+      >
+        <div className="flex items-center gap-2 rounded-[14px] border border-gray-200/80 bg-white/55 px-3.5 py-2 backdrop-blur-md shadow-lg">
             <span className="font-heading text-[1.3rem] font-bold tracking-tight text-gray-900">gradix</span>
             <div className="mx-2 h-4 w-px bg-gray-300" />
             <button className="flex items-center gap-1 rounded-md px-3 py-1.5 text-[12.5px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors">For Brands</button>
             <button className="flex items-center gap-1 rounded-md px-3 py-1.5 text-[12.5px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors">For Creators</button>
-          </div>
-          <div className="flex items-center gap-1.5 rounded-[14px] border border-gray-200 bg-white/80 px-3.5 py-2 backdrop-blur-md shadow-lg">
+        </div>
+        <div className="flex items-center gap-1.5 rounded-[14px] border border-gray-200/80 bg-white/55 px-3.5 py-2 backdrop-blur-md shadow-lg">
             <a className="rounded-md px-3 py-1.5 text-[12.5px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors" href="#">About</a>
             <a className="rounded-md px-3 py-1.5 text-[12.5px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors" href="#">Careers</a>
             <button className="flex items-center gap-1 rounded-md px-3 py-1.5 text-[12.5px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors">Login <ChevronDown className="h-3.5 w-3.5" /></button>
             <a className="ml-1.5 inline-flex items-center gap-1.5 rounded-[10px] border border-gray-300 bg-gray-900 px-4 py-2 text-[0.8rem] font-bold text-white hover:bg-black hover:shadow-[0_0_15px_rgba(17,24,39,0.2)] transition-all duration-300" href="#">
               Get access <MoveRight className="h-3.5 w-3.5" />
             </a>
-          </div>
-        </nav>
+        </div>
+      </nav>
+
+      <div className="relative z-10 mx-auto flex w-full max-w-[1200px] flex-col px-4 md:px-8 pb-16">
 
         {/* Hero content */}
-        <div className="flex flex-1 flex-col items-center justify-start pt-[5vh] md:pt-[6vh] lg:pt-[7vh] transform-gpu translate-z-0">
+        <div
+          className="flex min-h-[95vh] flex-col items-center justify-start pt-[5vh] md:pt-[6vh] lg:pt-[7vh] transform-gpu translate-z-0 transition-[transform,opacity] duration-300 ease-out"
+          style={{ transform: `translateY(-${heroLift}px)`, opacity: heroFade }}
+        >
 
           <section className="mx-auto flex w-full max-w-[840px] flex-col items-center text-center">
             <h1 className="font-heading text-[clamp(1.8rem,4vw,3.2rem)] font-semibold tracking-tight leading-[1.08] whitespace-nowrap text-gray-900">
@@ -434,6 +493,56 @@ export default function App() {
             </div>
           </section>
         </div>
+
+        <section ref={testimonialRef} className="relative left-1/2 right-1/2 mt-16 w-screen -translate-x-1/2 bg-white py-24 md:py-32">
+          <div className="mx-auto flex w-full max-w-[860px] flex-col items-center justify-center px-5 text-center">
+            <div className="flex flex-col items-center">
+              <img
+                loading="eager"
+                className="h-12 w-auto"
+                alt="Graphite"
+                src="https://res.cloudinary.com/passionfroot/image/upload/dpr_2.0/f_auto/q_auto/c_fill,h_48/v1/website/graphite"
+              />
+            </div>
+
+            <blockquote className="mt-10 font-heading text-[2rem] md:text-[3.15rem] font-medium leading-[1.08] tracking-tight text-gray-900">
+              <p
+                className="transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              >
+                <ScrollRevealText text="“Creator marketing worked, but it didn’t scale." progress={testimonialProgress} start={0.04} span={0.28} />
+              </p>
+              <p
+                className="transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              >
+                <ScrollRevealText text="I thought there had to be a better way." progress={testimonialProgress} start={0.36} span={0.28} />
+              </p>
+              <p
+                className="mt-5 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              >
+                <ScrollRevealText text="That’s how I found Passionfroot.”" progress={testimonialProgress} start={0.66} span={0.2} />
+              </p>
+            </blockquote>
+
+            <footer
+              className="mt-12 flex flex-col items-center gap-1 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              style={{
+                opacity: Math.max(0, Math.min(1, (testimonialProgress - 0.82) / 0.18)),
+                transform: `translateY(${Math.max(0, 8 - ((testimonialProgress - 0.82) / 0.18) * 8)}px)`,
+              }}
+            >
+              <div className="pb-1">
+                <img
+                  loading="eager"
+                  className="size-10 rounded-xl object-cover"
+                  alt="Rani Kubersky"
+                  src="https://res.cloudinary.com/passionfroot/image/upload/dpr_2.0/f_auto/q_auto/c_fill,h_40,w_40/v1/website/avatar-graphite"
+                />
+              </div>
+              <span className="font-body text-[1rem] md:text-[1.05rem] text-gray-800 font-bold">Rani Kubersky</span>
+              <span className="font-body text-[0.95rem] md:text-[1rem] text-gray-500">Marketing Manager</span>
+            </footer>
+          </div>
+        </section>
       </div>
     </div>
   );
