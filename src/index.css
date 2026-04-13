@@ -26,46 +26,104 @@
   --shadow-border-vstrong: 0 0 0 1px rgba(0, 0, 0, 0.2);
 }
 
-.text-h1 {
-  font-size: 3rem;
-  line-height: 1.1;
-}
-
-@media (min-width: 768px) {
-  .text-h1 {
-    font-size: 4rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .text-h1 {
-    font-size: 5rem;
-  }
-}
-
+/* ─── Text reveal ─── */
 @keyframes word-reveal {
   0% {
-    transform: translateY(20px);
+    transform: translateX(-8px) translateY(4px);
     opacity: 0;
+    filter: blur(0.5px);
   }
-
   100% {
-    transform: translateY(0);
+    transform: translateX(0) translateY(0);
     opacity: 1;
+    filter: blur(0px);
   }
 }
 
 .animate-word-reveal {
   display: inline-block;
-  animation: word-reveal var(--word-duration, 0.5s) forwards cubic-bezier(0.16, 1, 0.3, 1);
-  animation-delay: calc(var(--word-stagger, 0.025s) * var(--word-index, 0));
+  animation: word-reveal 0.45s forwards cubic-bezier(0.22, 1, 0.36, 1);
+  animation-delay: calc(0.035s * var(--word-index, 0));
   opacity: 0;
+  will-change: transform, opacity, filter;
 }
 
+/* ─── Floating Animations ─── */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes float-delayed {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(9px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+.animate-float-delayed {
+  animation: float-delayed 7s ease-in-out infinite 1s;
+}
+.animate-float-reverse {
+  animation: float-reverse 8s ease-in-out infinite 2s;
+}
+
+/* ─── Chat text fade-in-up ─── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+    filter: blur(0.5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
+}
+
+/* ─── Body ─── */
 body {
-  background-color: #000;
-  color: white;
-  min-height: 100vh;
+  background-color: #fff;
+  color: #111827;
   margin: 0;
-  overflow-x: hidden;
+  overflow: hidden;
+  height: 100vh;
+  cursor: default;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ─── Selection styling ─── */
+::selection {
+  background: rgba(229, 231, 235, 0.8);
+  color: #111827;
+}
+
+/* ─── Tap highlight ─── */
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent;
 }
