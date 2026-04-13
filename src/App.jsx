@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowUp, AtSign, BarChart3, Check, ChevronDown, Globe, MoveRight, Play, Plus, Sparkles } from "lucide-react";
+import { ArrowUp, AtSign, BarChart3, Check, ChevronDown, Globe, MoveRight, Play, Plus, Sparkles, Wallet } from "lucide-react";
 
 /* ─── mode data ─── */
 const modes = ["plan", "run", "measure"];
@@ -231,12 +231,181 @@ function ScrollRevealText({ text, className = "", progress = 0, start = 0, span 
   );
 }
 
+function CampaignShowcaseSection({ scrollY }) {
+  const mountain = "https://res.cloudinary.com/passionfroot/image/upload/w_1920/q_auto/f_auto/website/mountain";
+  const sectionRef = useRef(null);
+  const [progress, setProgress] = useState(0);
+  const avatars = [
+    {
+      name: "This looks great",
+      x: "14%",
+      y: "26%",
+      img: "https://res.cloudinary.com/passionfroot/image/upload/dpr_2.0/f_auto/q_auto/c_fill,h_36,w_36/v1/workspace-production/L1hMai_Group%203%20(1)",
+    },
+    {
+      name: "Love this, I'm in!",
+      x: "50%",
+      y: "22%",
+      img: "https://res.cloudinary.com/passionfroot/image/upload/dpr_2.0/f_auto/q_auto/c_fill,h_36,w_36/v1/workspace-production/creators/e0a2f0b0-27eb-44aa-9d19-366faf60fd16/profile-growproduct",
+    },
+    {
+      name: "I'm interested!",
+      x: "78%",
+      y: "24%",
+      img: "https://res.cloudinary.com/passionfroot/image/upload/dpr_2.0/f_auto/q_auto/c_fill,h_36,w_36/v1/workspace-production/Elena%20LinkedIn%20Headshot__xVznF3",
+    },
+    {
+      name: "Let's do it!",
+      x: "18%",
+      y: "42%",
+      img: "https://res.cloudinary.com/passionfroot/image/upload/dpr_2.0/f_auto/q_auto/c_fill,h_36,w_36/v1/workspace-production/Austin%20Nasso%201__z8tpH7",
+    },
+    {
+      name: "Count me in",
+      x: "76%",
+      y: "44%",
+      img: "https://res.cloudinary.com/passionfroot/image/upload/dpr_2.0/f_auto/q_auto/c_fill,h_36,w_36/v1/workspace-production/Group%209%20(3)__jsuMrp",
+    },
+  ];
+  const clamp01 = (n) => Math.max(0, Math.min(1, n));
+  const revealStyle = (start, span = 0.14, y = 20) => {
+    const t = clamp01((progress - start) / span);
+    return {
+      opacity: t,
+      transform: `translateY(${(1 - t) * y}px) scale(${0.96 + t * 0.04})`,
+      transition: "opacity 220ms linear, transform 220ms linear",
+    };
+  };
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight || 1;
+    const start = vh * 0.94;
+    const end = vh * 0.18;
+    const p = (start - rect.top) / (start - end);
+    setProgress(clamp01(p));
+  }, [scrollY]);
+
+  return (
+    <section ref={sectionRef} className="mx-auto mt-8 w-full max-w-[1280px] rounded-xl bg-[#f6f5f1] p-3 md:p-5">
+      <div className="relative h-[300px] overflow-hidden rounded-t-xl md:h-[460px] lg:h-[620px]">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${mountain})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#f6f5f1]/80" />
+        <h2 className="relative z-10 max-w-[640px] px-6 pt-8 font-heading text-[2.2rem] font-semibold leading-[1.02] text-white md:px-10 md:pt-12 md:text-[3.6rem]">
+          Run campaigns at scale, not in spreadsheets.
+        </h2>
+      </div>
+
+      <div className="relative -mt-28 rounded-b-xl bg-[#f6f5f1] px-4 pb-8 pt-8 md:-mt-40 md:px-8 md:pb-12 md:pt-12 lg:-mt-56 lg:px-12">
+        <div className="rounded-xl bg-[#f9f8f4] px-4 py-8 md:px-8 md:py-10">
+          <div className="text-center">
+            <h3 className="font-heading text-[2rem] font-medium text-gray-900">Work with creators who actually respond</h3>
+            <p className="mx-auto mt-3 max-w-[700px] text-[1rem] text-gray-700">
+              Generic creator databases flood you with irrelevant profiles. Passionfroot creators already reach your ICP — so when you reach out, they&apos;re actually interested in partnering.
+            </p>
+          </div>
+
+          <div className="relative mt-8 h-[460px] overflow-hidden md:h-[512px]">
+            <div className="absolute left-1/2 top-[66%] h-[620px] w-[620px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,145,71,0.22)_0%,rgba(178,107,245,0.12)_38%,rgba(255,255,255,0)_72%)]" />
+            <svg className="pointer-events-none absolute left-1/2 top-[68%] h-[700px] w-[700px] -translate-x-1/2 -translate-y-1/2" viewBox="0 0 700 700" fill="none">
+              {[90, 145, 200, 255].map((r) => (
+                <circle key={r} cx="350" cy="430" r={r} stroke="rgba(196,166,223,0.45)" />
+              ))}
+            </svg>
+
+            <div className="relative z-10 flex justify-center gap-16 pt-2">
+              <div className="text-center">
+                <p className="font-heading text-[2rem] font-semibold text-gray-900">8x</p>
+                <p className="text-sm font-semibold text-gray-700">Response rates</p>
+                <p className="text-xs italic text-gray-500">vs. cold outreach</p>
+              </div>
+              <div className="text-center">
+                <p className="font-heading text-[2rem] font-semibold text-gray-900">3x</p>
+                <p className="text-sm font-semibold text-gray-700">Faster turnaround</p>
+                <p className="text-xs italic text-gray-500">vs. manual campaigns</p>
+              </div>
+            </div>
+
+            {avatars.map((a, i) => (
+              <div key={a.name} className="absolute z-20 flex flex-col items-center" style={{ left: a.x, top: a.y, ...revealStyle(0.16 + i * 0.08, 0.12, 14) }}>
+                <span className="mb-1 rounded-md border border-gray-200 bg-white px-2 py-0.5 text-xs text-gray-700 shadow-sm">{a.name}</span>
+                <div className="h-8 w-8 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+                  <img src={a.img} alt={a.name} className="h-full w-full object-cover" loading="lazy" />
+                </div>
+              </div>
+            ))}
+
+            <div className="absolute bottom-20 left-1/2 z-20 w-[270px] -translate-x-1/2 rounded-xl bg-orange-500 px-3 py-2 text-sm font-semibold leading-5 text-orange-50 shadow-[0_8px_26px_rgba(235,105,39,0.35)]" style={revealStyle(0.58, 0.16, 18)}>
+              We&apos;d love to collaborate with you on Youtube, LinkedIn &amp; X. Would you be open to discuss?
+            </div>
+
+            <div className="absolute bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-[18px] border border-gray-300 bg-white p-1.5 shadow-sm" style={revealStyle(0.68, 0.12, 12)}>
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-900">
+                <div className="grid grid-cols-2 gap-1">
+                  {[0, 1, 2, 3].map((k) => <span key={k} className="h-1.5 w-1.5 rounded-[3px] bg-orange-500" />)}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="my-6 hidden h-px bg-gray-200 md:block" />
+
+          <div className="grid grid-cols-1 gap-10 md:grid-cols-[1fr_1px_1fr] md:gap-12">
+            <div>
+              <h3 className="font-heading text-[2rem] font-medium leading-tight text-gray-900">Keep campaigns moving without the manual work</h3>
+              <p className="mt-3 max-w-[520px] text-[1rem] text-gray-700">
+                Zest surfaces what needs attention in one action center: missed deadlines, pending approvals, follow-ups. Process everything efficiently and keep momentum.
+              </p>
+              <div className="mt-6 rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
+                <p className="text-sm font-bold text-gray-900">4 creators missed their draft deadline</p>
+                <p className="text-sm font-bold text-gray-900">What would you like to do?</p>
+                <div className="mt-3 space-y-2">
+                  {["Send reminder to overdue creators", "Extend deadline by 5 days", "Ask Zest to do something else..."].map((item, i) => (
+                    <div key={item} className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+                      <span className="mr-2 font-semibold">{String.fromCharCode(65 + i)}</span>{item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="hidden w-px bg-gray-200 md:block" />
+
+            <div>
+              <h3 className="font-heading text-[2rem] font-medium leading-tight text-gray-900">Fast, compliant payments — no matter how many creators</h3>
+              <p className="mt-3 max-w-[520px] text-[1rem] text-gray-700">
+                Onboard Passionfroot once and pay any creator through our compliant wallet — no individual vendor approvals, no procurement delays.
+              </p>
+              <div className="mt-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm" style={revealStyle(0.76, 0.12, 16)}>
+                <p className="text-sm font-bold text-gray-900">23 Creators to pay</p>
+                <p className="mt-1 text-sm text-gray-700">Total <span className="font-bold">$34,550</span></p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <button className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-bold text-white" style={revealStyle(0.84, 0.1, 12)}>
+                    <Wallet className="h-4 w-4" /> Pay with FrootWallet
+                  </button>
+                  <button className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-900" style={revealStyle(0.9, 0.1, 12)}>
+                    Select payment method
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ─── Main app ─── */
 export default function App() {
   const [activeMode, setActiveMode] = useState("plan");
   const [hoverMode, setHoverMode] = useState(null);
   const [isReady, setIsReady] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [testimonialProgress, setTestimonialProgress] = useState(0);
   const [showIntroCursor, setShowIntroCursor] = useState(false);
@@ -252,13 +421,6 @@ export default function App() {
   useEffect(() => {
     const id = requestAnimationFrame(() => setIsReady(true));
     return () => cancelAnimationFrame(id);
-  }, []);
-
-  useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
@@ -347,18 +509,18 @@ export default function App() {
       </div>
 
       {/* Nav */}
-      <nav
-        className={`sticky top-0 z-40 mx-auto hidden w-full max-w-[1200px] items-center justify-between px-4 md:px-8 py-3 lg:flex transition-all duration-300 ${
-          isScrolled ? "bg-white/70 backdrop-blur-xl border-b border-gray-200/80 shadow-[0_8px_24px_rgba(17,24,39,0.08)]" : "bg-transparent"
-        }`}
-      >
-        <div className="flex items-center gap-2 rounded-[14px] border border-gray-200/80 bg-white/55 px-3.5 py-2 backdrop-blur-md shadow-lg">
+      <nav className="sticky top-0 z-40 mx-auto hidden w-full max-w-[1200px] items-center justify-between px-4 md:px-8 py-4 lg:flex">
+        <div className="flex items-center gap-2 rounded-[14px] border border-gray-200 bg-white/95 px-3.5 py-2 backdrop-blur-md shadow-[0_6px_18px_rgba(17,24,39,0.08)]">
             <span className="font-heading text-[1.3rem] font-bold tracking-tight text-gray-900">gradix</span>
             <div className="mx-2 h-4 w-px bg-gray-300" />
-            <button className="flex items-center gap-1 rounded-md px-3 py-1.5 text-[12.5px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors">For Brands</button>
-            <button className="flex items-center gap-1 rounded-md px-3 py-1.5 text-[12.5px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors">For Creators</button>
+            <button className="flex items-center gap-1 rounded-md px-3 py-1.5 text-[12.5px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors">
+              For Brands <ChevronDown className="h-3.5 w-3.5" />
+            </button>
+            <button className="flex items-center gap-1 rounded-md px-3 py-1.5 text-[12.5px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors">
+              For Creators <ChevronDown className="h-3.5 w-3.5" />
+            </button>
         </div>
-        <div className="flex items-center gap-1.5 rounded-[14px] border border-gray-200/80 bg-white/55 px-3.5 py-2 backdrop-blur-md shadow-lg">
+        <div className="flex items-center gap-1.5 rounded-[14px] border border-gray-200 bg-white/95 px-3.5 py-2 backdrop-blur-md shadow-[0_6px_18px_rgba(17,24,39,0.08)]">
             <a className="rounded-md px-3 py-1.5 text-[12.5px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors" href="#">About</a>
             <a className="rounded-md px-3 py-1.5 text-[12.5px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors" href="#">Careers</a>
             <button className="flex items-center gap-1 rounded-md px-3 py-1.5 text-[12.5px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors">Login <ChevronDown className="h-3.5 w-3.5" /></button>
@@ -543,6 +705,8 @@ export default function App() {
             </footer>
           </div>
         </section>
+
+        <CampaignShowcaseSection scrollY={scrollY} />
       </div>
     </div>
   );
